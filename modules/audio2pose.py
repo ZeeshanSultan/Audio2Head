@@ -35,9 +35,9 @@ def get_pose_from_audio(img,audio,model_path):
     maxv = np.array([0.411, 0.547, 0.433, 159.1, 116.5, 376.5], dtype=np.float32)
 
 
-    generator = audio2poseLSTM().cuda()
+    generator = audio2poseLSTM()
 
-    ckpt_para = torch.load(model_path)
+    ckpt_para = torch.load(model_path, map_location=torch.device('cpu'))
 
     generator.load_state_dict(ckpt_para["audio2pose"])
     generator.eval()
@@ -46,7 +46,7 @@ def get_pose_from_audio(img,audio,model_path):
     for i in range(num_frame):
         audio_seq.append(audio[i*4:i*4+4])
 
-    audio = torch.from_numpy(np.array(audio_seq,dtype=np.float32)).unsqueeze(0).cuda()
+    audio = torch.from_numpy(np.array(audio_seq,dtype=np.float32)).unsqueeze(0)
 
     x = {}
     x["img"] = img
