@@ -13,6 +13,7 @@ from modules.generator import OcclusionAwareGenerator
 from modules.keypoint_detector import KPDetector
 from modules.audio2kp import AudioModel3D
 import yaml,os,imageio
+import imageio_ffmpeg as ffmpeg
 
 def draw_annotation_box( image, rotation_vector, translation_vector, color=(255, 255, 255), line_width=2):
     """Draw a 3D box as annotation of pose"""
@@ -228,7 +229,8 @@ def audio2head(audio_path, img_path, model_path, save_path):
 
     video_path = os.path.join(log_dir, "temp", image_name)
 
-    imageio.mimsave(video_path, predictions_gen, fps=25.0)
+    #imageio.mimsave(video_path, predictions_gen, fps=25.0)
+    ffmpeg.write_frames(video_path, predictions_gen, fps=25.0, codec='libx264')
 
     save_video = os.path.join(log_dir, image_name)
     cmd = r'ffmpeg -y -i "%s" -i "%s" -vcodec copy "%s"' % (video_path, audio_path, save_video)

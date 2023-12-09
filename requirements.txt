@@ -4,6 +4,7 @@ pyworld
 pyyaml
 pytorch-lightning
 imageio
+imageio-ffmpeg
 scipy
 pyworld
 opencv-python
