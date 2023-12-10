@@ -230,10 +230,16 @@ def audio2head(audio_path, img_path, model_path, save_path):
     video_path = os.path.join(log_dir, "temp", image_name)
 
     #imageio.mimsave(video_path, predictions_gen, fps=25.0)
-    ffmpeg.write_frames(video_path, predictions_gen, fps=25.0, codec='libx264')
+    writer = ffmpeg.write_frames(video_path, size=(256, 256), fps=25.0, codec='libx264')
+    next(writer)
+    for frame in predictions_gen:
+        frame = np.ascontiguousarray(frame)  # Ensure frame is C-contiguous
+        writer.send(frame)
+    writer.close()
 
     save_video = os.path.join(log_dir, image_name)
     cmd = r'ffmpeg -y -i "%s" -i "%s" -vcodec copy "%s"' % (video_path, audio_path, save_video)
+    print(cmd)
     os.system(cmd)
     os.remove(video_path)
     
